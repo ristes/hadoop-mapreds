@@ -1,9 +1,12 @@
-package mk.ukim.finki.etnc.wikidump;
+package mk.ukim.finki.etnc.hadoop.wikidump;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
+
+import mk.ukim.finki.etnc.hadoop.wikiparse.InfoBox;
+import mk.ukim.finki.etnc.hadoop.wikiparse.WikiParse;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -42,9 +45,9 @@ public class WikiDumpParseMapper extends MapReduceBase implements
 
 				if (textEl != null) {
 					String text = textEl.getTextTrim();
-					output.collect(new Text(id), new Text(text));
-				} else {
-					System.out.println("ID: " + id);
+					InfoBox ibox = WikiParse.parseInfoBox(text);
+					if (ibox != null)
+						output.collect(new Text(id), new Text(ibox.dumpRaw()));
 				}
 			}
 
